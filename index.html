@@ -106,6 +106,18 @@
   .play:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
   .play:active{transform:translateY(1px)}
 
+  .cta{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+  }
+  .hint{
+    margin:0;
+    font-size:12px;
+    color:var(--ink-dim);
+  }
+
   .notes{
     max-width:560px;
     display:flex;
@@ -138,12 +150,14 @@
 
 <div class="stage">
   <h1 class="lockup">성화 봉송</h1>
-  <button class="play" id="play" type="button">▶ 성화 봉송 보기</button>
+  <div class="cta">
+    <button class="play" id="play" type="button">▶ 성화 봉송 보기</button>
+    <p class="hint">소리를 켜면 더 좋아요</p>
+  </div>
 </div>
 
 <ul class="notes">
   <li>길이 <b>약 11초</b></li>
-  <li>소리를 켜면 더 좋아요</li>
   <li>아무 데나 누르면 넘어갑니다</li>
 </ul>
 
