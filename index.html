@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>성화 봉송 — 온라인 미니 올림픽 개회</title>
+<meta name="description" content="온라인 미니 올림픽 개회용 2D 도트 성화 봉송 인트로 예제">
+<meta property="og:title" content="성화 봉송">
+<meta property="og:description" content="온라인 미니 올림픽 개회 인트로">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --night:#0f1b2d;
+    --stand:#1b2c47;
+    --track:#2a3b57;
+    --ember:#ffc145;
+    --ink:#e9eef7;
+    --ink-dim:#8fa0bd;
+    --display:"Black Han Sans","Noto Sans KR",sans-serif;
+    --body:"Noto Sans KR",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--night);
+    color:var(--ink);
+    font-family:var(--body);
+    padding-block:clamp(28px,7vw,64px);
+    padding-left:16px;
+    padding-right:16px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:clamp(18px,4vw,30px);
+    min-height:100vh;
+  }
+
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.22em;
+    color:var(--ink-dim);
+    margin:0;
+  }
+
+  .stage{
+    width:100%;
+    max-width:760px;
+    aspect-ratio:16/9;
+    max-height:70vh;
+    position:relative;
+    overflow:hidden;
+    border:2px solid #22344f;
+    background:
+      linear-gradient(var(--track) 0 100%) bottom/100% 18% no-repeat,
+      linear-gradient(#16342c 0 100%) bottom/100% 24% no-repeat,
+      linear-gradient(var(--stand) 0 100%) bottom/100% 46% no-repeat,
+      radial-gradient(120% 90% at 62% 74%, rgba(255,193,69,.20), transparent 58%),
+      linear-gradient(var(--night) 0 100%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(12px,2.6vw,20px);
+    text-align:center;
+    padding:16px;
+  }
+  .stage::before{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:24%;
+    height:22%;
+    background-image:radial-gradient(circle, rgba(255,193,69,.55) 1px, transparent 1.4px);
+    background-size:26px 16px;
+    opacity:.7;
+  }
+  .stage > *{position:relative}
+
+  .lockup{
+    font-family:var(--display);
+    font-weight:400;
+    color:var(--ember);
+    font-size:clamp(26px,6.2vw,52px);
+    line-height:1.1;
+    margin:0;
+    text-wrap:balance;
+    text-shadow:0 0 26px rgba(255,193,69,.35);
+  }
+
+  .play{
+    font-family:var(--display);
+    font-weight:400;
+    font-size:clamp(16px,3.2vw,22px);
+    color:#20160a;
+    background:var(--ember);
+    border:0;
+    border-radius:6px;
+    padding:.62em 1.5em;
+    cursor:pointer;
+    letter-spacing:.02em;
+    box-shadow:0 6px 24px rgba(255,193,69,.28);
+  }
+  .play:hover{background:#ffd177}
+  .play:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+  .play:active{transform:translateY(1px)}
+
+  .notes{
+    max-width:560px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:6px 18px;
+    margin:0;
+    padding:0;
+    list-style:none;
+    font-size:13px;
+    color:var(--ink-dim);
+    line-height:1.7;
+  }
+  .notes li{white-space:nowrap}
+  .notes b{color:var(--ink);font-weight:500}
+
+  footer{
+    font-size:12px;
+    color:var(--ink-dim);
+    text-align:center;
+    line-height:1.8;
+  }
+  footer a{color:var(--ember);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<p class="eyebrow">온라인 미니 올림픽 개회</p>
+
+<div class="stage">
+  <h1 class="lockup">성화 봉송</h1>
+  <button class="play" id="play" type="button">▶ 성화 봉송 보기</button>
+</div>
+
+<ul class="notes">
+  <li>길이 <b>약 11초</b></li>
+  <li>소리를 켜면 더 좋아요</li>
+  <li>아무 데나 누르면 넘어갑니다</li>
+</ul>
+
+<footer>
+  이식용 파일은 <a href="torch-intro.js">torch-intro.js</a> 하나입니다<br>
+  붙이는 법은 <a href="이식-안내.md">이식 안내</a>를 보세요
+</footer>
+
+<script src="torch-intro.js"></script>
+<script>
+  document.getElementById('play').addEventListener('click', function () {
+    if (window.TorchIntro) TorchIntro.play();
+  });
+</script>
+</body>
+</html>
