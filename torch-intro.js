@@ -12,8 +12,9 @@
 
   var DEFAULTS = {
     title: '온라인 미니 올림픽',
-    sub: '우리들의 운동회, 지금 시작!',
-    tag: '어디에 있든 우리는 같은 운동장',
+    sub: '어디에 있든 우리는 같은 운동장',
+    tag: '',            // 셋째 줄. 비워 두면 안 뜬다
+    endLabel: '우리들의 올림픽! 시작',   // 마지막 화면 버튼. '' 로 두면 저절로 닫힌다
     speed: 100,         // 주자 속도(px/s). 낮추면 인트로가 길어진다
     sound: true,        // 8비트 효과음 (클릭 핸들러 안에서 play 해야 소리가 난다)
     skipButton: true,   // 건너뛰기 버튼
@@ -97,8 +98,21 @@
       'align-items:center;justify-content:center;opacity:1;transition:opacity .55s ease}' +
       '.ti-ov.ti-in-box{position:absolute}' +
       '.ti-ov.ti-out{opacity:0;pointer-events:none}' +
-      '.ti-ov canvas{width:min(100%,calc(100vh * 16 / 9));max-height:100%;aspect-ratio:16/9;' +
-      'display:block;image-rendering:pixelated}' +
+      '.ti-stage{position:relative;width:min(100%,calc(100vh * 16 / 9));max-height:100%;' +
+      'aspect-ratio:16/9;display:block}' +
+      '.ti-stage canvas{width:100%;height:100%;display:block;image-rendering:pixelated}' +
+      '.ti-go{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);' +
+      'font-family:"Black Han Sans","Noto Sans KR",sans-serif;font-size:clamp(15px,2.6vw,26px);' +
+      'color:#20160a;background:#ffc145;border:0;border-radius:8px;padding:.55em 1.5em;' +
+      'cursor:pointer;letter-spacing:.02em;white-space:nowrap;' +
+      'box-shadow:0 6px 26px rgba(255,193,69,.42);opacity:0;transition:opacity .5s ease;' +
+      'animation:ti-pulse 1.8s ease-in-out infinite}' +
+      '.ti-go.ti-show{opacity:1}' +
+      '.ti-go:hover{background:#ffd177}' +
+      '.ti-go:focus-visible{outline:3px solid #e9eef7;outline-offset:3px}' +
+      '@keyframes ti-pulse{0%,100%{transform:translateX(-50%) scale(1)}' +
+      '50%{transform:translateX(-50%) scale(1.045)}}' +
+      '@media (prefers-reduced-motion: reduce){.ti-go{animation:none}}' +
       '.ti-skip{position:absolute;right:16px;top:16px;font-family:"Noto Sans KR",sans-serif;' +
       'font-size:13px;font-weight:700;color:#0f1b2d;background:rgba(255,193,69,.92);border:0;' +
       'border-radius:999px;padding:8px 16px;cursor:pointer}' +
@@ -130,9 +144,22 @@
 
     var ov = document.createElement('div');
     ov.className = 'ti-ov' + (o.mount ? ' ti-in-box' : '');
+    var stage = document.createElement('div');
+    stage.className = 'ti-stage';
     var cv = document.createElement('canvas');
     cv.width = W; cv.height = H;
-    ov.appendChild(cv);
+    stage.appendChild(cv);
+
+    var endBtn = null;
+    if (o.endLabel) {
+      endBtn = document.createElement('button');
+      endBtn.className = 'ti-go';
+      endBtn.type = 'button';
+      endBtn.hidden = true;
+      endBtn.textContent = o.endLabel;
+      stage.appendChild(endBtn);
+    }
+    ov.appendChild(stage);
 
     var skipBtn = null;
     if (o.skipButton) {
@@ -249,7 +276,7 @@
     /* ── 상태 ── */
     var phase = 'in', t0 = 0, runX = 26, rimY = RIM_LOW, lit = 0,
         arcP = 0, titleA = 0, flash = 0, camX = 0, last = performance.now(),
-        raf = 0, ended = false;
+        raf = 0, ended = false, endShown = false;
 
     var reduced = false;
     try { reduced = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
@@ -290,7 +317,15 @@
       } else if (phase === 'done') {
         titleA = 1;
         t0 += dt;
-        if (t0 > 0.9) end();
+        if (!endBtn) {
+          if (t0 > 0.9) end();
+        } else if (!endShown && t0 > 0.35) {
+          endShown = true;
+          endBtn.hidden = false;
+          if (skipBtn) skipBtn.hidden = true;
+          requestAnimationFrame(function () { endBtn.classList.add('ti-show'); });
+          endBtn.focus({ preventScroll: true });
+        }
       }
 
       flash = Math.max(0, flash - dt * 1.8);
@@ -409,13 +444,15 @@
         g.textAlign = 'center';
         g.fillStyle = '#ffc145';
         g.font = '400 18px "Black Han Sans", sans-serif';
-        g.fillText(o.title, W / 2, 74);
+        g.fillText(o.title, W / 2, 62);
         g.fillStyle = '#e9eef7';
         g.font = '700 9px "Noto Sans KR", sans-serif';
-        g.fillText(o.sub, W / 2, 88);
-        g.globalAlpha = titleA * 0.7;
-        g.font = '500 7px "Noto Sans KR", sans-serif';
-        g.fillText(o.tag, W / 2, 100);
+        g.fillText(o.sub, W / 2, 76);
+        if (o.tag) {
+          g.globalAlpha = titleA * 0.7;
+          g.font = '500 7px "Noto Sans KR", sans-serif';
+          g.fillText(o.tag, W / 2, 87);
+        }
         g.globalAlpha = 1;
       }
 
@@ -450,6 +487,7 @@
     function onKey(ev) { if (ev.key === 'Escape' || ev.key === ' ' || ev.key === 'Enter') end(); }
     document.addEventListener('keydown', onKey);
     if (skipBtn) skipBtn.addEventListener('click', function (ev) { ev.stopPropagation(); end(); });
+    if (endBtn) endBtn.addEventListener('click', function (ev) { ev.stopPropagation(); end(); });
     if (o.clickToSkip) ov.addEventListener('click', end);
 
     (document.fonts ? Promise.all([
